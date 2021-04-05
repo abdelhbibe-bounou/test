@@ -1,4 +1,4 @@
-# ce répertoire contient les fichiers sources de codes de mon programme pour la résolution des 4 problèmes d'optimisation en utilisant les solveurs proposés
+# Ce répertoire contient Des fichiers sources de codes de mon programme pour la résolution des 4 problèmes d'optimisation en utilisant les solveurs proposés
 Pour lancer le programme (création de l'exécutable optim), naviguer en utilisant le terminal (sous linux) vers le dossier qui contient les fichiers, puis à l'aide de la commande "make" l'exécutable est créé.
 L'interaction avec le programme se fait comme suit : dans le même terminal, vous écrivez./Optim [nom_solveur] [nom_probleme] (Exemple ./Optim S1 P1) après appuyer sur ENTRER et le fichier result.txt est créé contenant ainsi les réulats (fmin et (Xmin,ymin)). Pour évaluer les différents solveurs appliqués aux 4 problèmes il faut respecter certaines consignes. utiliser les raccourcis de solveurs (S1, S2.... S7) et les raccourcis de problèmes (P1, P2... P4).
 Les fichiers sources contient des commentaires facilitant ainsi leurs lectures.
