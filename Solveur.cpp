@@ -196,7 +196,7 @@ void S5::resoudre(Probleme *problm, Point &Pmin, double &Fmin)
       {
 
          double larg_2 = ((problm->getVariables())[0][1] - (problm->getVariables())[0][0]) / 4;
-         problm->getVariables()[0][0] = max(minX, Pmin.getX() - larg_2);
+         problm->getVariables()[0][0] = max(minX, Pmin.getX() - larg_2); // Réduction  du domaine de recherche
          problm->getVariables()[0][1] = min(maxX, Pmin.getX() + larg_2);
          Solv->resoudre(problm, Pmin, Fmin);
       }
@@ -236,104 +236,18 @@ void S6::resoudre(Probleme *problm, Point &Pmin, double &Fmin)
       Point G, D;
 
       double x_centre = ((problm->getVariables())[0][1] + (problm->getVariables())[0][0]) / 2;
-      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 9;
+      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 10;
 
       Pmin.setX(x_centre);
+      //cout << "pmin =" << Pmin.getX() << endl;
       Fmin = problm->F(Pmin);
 
-      G.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
-      D.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
-      while (problm->F(G) < Fmin || problm->F(D) < Fmin)
-      {
-         if (problm->F(G) < problm->F(D))
-         {
-            Pmin.setX(G.getX());
-            Fmin = problm->F(Pmin);
-         }
-         else
-         {
-            Pmin.setX(D.getX());
-            Fmin = problm->F(Pmin);
-         }
+      D.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
+      G.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
+      for (int i = 0; i < 5; i++)
 
-         G.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
-         D.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
-      }
-   }
-
-   if (problm->getDim() == 2)
-   {
-      Point G, D, U, DOW;
-
-      double x_centre = ((problm->getVariables())[0][1] + (problm->getVariables())[0][0]) / 2;
-      double y_centre = ((problm->getVariables())[1][1] + (problm->getVariables())[1][0]) / 2;
-
-      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 9;
-      double pasY = ((problm->getVariables()[1][1]) - (problm->getVariables()[1][0])) / 9;
-      double pasMin = min(pasX, pasY);
-
-      tmp.setXY(x_centre, y_centre);
-      Pmin.setXY(tmp.getX(), tmp.getY());
-      Fmin = problm->F(tmp);
-
-      G.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
-      D.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
-
-      U.setX(min(Pmin.getX() + pasMin, problm->getVariables()[1][1]));
-      DOW.setX(max(Pmin.getX() - pasMin, problm->getVariables()[1][0]));
-
-      while (problm->F(G) < Fmin || problm->F(D) < Fmin || problm->F(U) < Fmin || problm->F(DOW) < Fmin)
-      {
-
-         if (problm->F(G) <= problm->F(D) && problm->F(G) <= problm->F(U) && problm->F(G) <= problm->F(DOW))
-         {
-            Pmin.setXY(G.getX(), G.getY());
-            Fmin = problm->F(Pmin);
-         }
-         else if (problm->F(D) <= problm->F(G) && problm->F(D) <= problm->F(U) && problm->F(D) <= problm->F(DOW))
-         {
-            Pmin.setXY(D.getX(), D.getY());
-            Fmin = problm->F(Pmin);
-         }
-         else if (problm->F(U) <= problm->F(D) && problm->F(U) <= problm->F(G) && problm->F(U) <= problm->F(DOW))
-         {
-            Pmin.setXY(U.getX(), U.getY());
-            Fmin = problm->F(Pmin);
-         }
-         else if (problm->F(DOW) <= problm->F(D) && problm->F(DOW) <= problm->F(G) && problm->F(DOW) <= problm->F(U))
-         {
-            Pmin.setXY(DOW.getX(), DOW.getY());
-            Fmin = problm->F(Pmin);
-         }
-
-         G.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
-         D.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
-
-         U.setX(min(Pmin.getX() + pasMin, problm->getVariables()[1][1]));
-         DOW.setX(max(Pmin.getX() - pasMin, problm->getVariables()[1][0]));
-      }
-   }
-}
-
-void S7::resoudre(Probleme *problm, Point &Pmin, double &Fmin)
-{
-
-   Point tmp;
-
-   if (problm->getDim() == 1)
-   {
-      Point G, D;
-
-      double x_centre = ((problm->getVariables())[0][1] + (problm->getVariables())[0][0]) / 2;
-      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 9;
-      Pmin.setX(x_centre);
-      Fmin = problm->F(Pmin);
-      while (pasX >= 0.001)
-      {
-
-         G.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
-         D.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
-         while (problm->F(G) < Fmin || problm->F(D) < Fmin)
+      { //cout << "pmin==" << Pmin.getX() << endl;
+         if (problm->F(G) < Fmin || problm->F(D) < Fmin)
          {
             if (problm->F(G) < problm->F(D))
             {
@@ -343,13 +257,15 @@ void S7::resoudre(Probleme *problm, Point &Pmin, double &Fmin)
             else
             {
                Pmin.setX(D.getX());
+
                Fmin = problm->F(Pmin);
             }
-
-            G.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
-            D.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
          }
-         pasX /= 10;
+
+         D.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
+         G.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
+         cout << D.getX() << endl;
+         cout << G.getX() << endl;
       }
    }
 
@@ -359,59 +275,275 @@ void S7::resoudre(Probleme *problm, Point &Pmin, double &Fmin)
 
       double x_centre = ((problm->getVariables())[0][1] + (problm->getVariables())[0][0]) / 2;
       double y_centre = ((problm->getVariables())[1][1] + (problm->getVariables())[1][0]) / 2;
-
-      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 9;
-      double pasY = ((problm->getVariables()[1][1]) - (problm->getVariables()[1][0])) / 9;
+      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 10;
+      double pasY = ((problm->getVariables()[1][1]) - (problm->getVariables()[1][0])) / 10;
       double pasMin = min(pasX, pasY);
+      cout << problm->getVariables()[0][1] << endl; // 100
+      cout << problm->getVariables()[0][0] << endl; // -100
+      cout << problm->getVariables()[1][1] << endl; //100
+      cout << problm->getVariables()[1][0] << endl; // -100
+
       tmp.setXY(x_centre, y_centre);
       Pmin.setXY(tmp.getX(), tmp.getY());
       Fmin = problm->F(tmp);
 
-      while (pasMin > 0.001)
+      D.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
+      G.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
+      U.setY(min(Pmin.getY() + pasMin, problm->getVariables()[1][1]));
+      DOW.setY(max(Pmin.getY() - pasMin, problm->getVariables()[1][0]));
+
+      // boucle
+      for (int i = 0; i < 5; i++)
+
       {
-
-         G.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
-         D.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
-
-         U.setX(min(Pmin.getX() + pasMin, problm->getVariables()[1][1]));
-         DOW.setX(max(Pmin.getX() - pasMin, problm->getVariables()[1][0]));
-
-         while (problm->F(G) < Fmin || problm->F(D) < Fmin || problm->F(U) < Fmin || problm->F(DOW) < Fmin)
+         cout << "i===" << D.getX() << endl;
+         cout << "i===" << G.getX() << endl;
+         Point temp1, temp2, temp3, temp4;
+         temp1.setXY(G.getX(), U.getY());
+         temp2.setXY(G.getX(), DOW.getY());
+         temp3.setXY(D.getX(), U.getY());
+         temp4.setXY(D.getX(), DOW.getY());
+         if (problm->F(temp1) < Fmin || problm->F(temp2) < Fmin || problm->F(temp3) < Fmin || problm->F(temp4) < Fmin)
          {
-
-            if (problm->F(G) <= problm->F(D) && problm->F(G) <= problm->F(U) && problm->F(G) <= problm->F(DOW))
+            if (problm->F(temp1) < problm->F(temp2))
             {
-               Pmin.setXY(G.getX(), G.getY());
+               Pmin.setXY(temp1.getX(), temp1.getY());
                Fmin = problm->F(Pmin);
             }
-            else if (problm->F(D) <= problm->F(G) && problm->F(D) <= problm->F(U) && problm->F(D) <= problm->F(DOW))
+            else
             {
-               Pmin.setXY(D.getX(), D.getY());
+               Pmin.setXY(temp2.getX(), temp2.getY());
                Fmin = problm->F(Pmin);
             }
-            else if (problm->F(U) <= problm->F(D) && problm->F(U) <= problm->F(G) && problm->F(U) <= problm->F(DOW))
+            if (problm->F(temp1) < problm->F(temp3))
             {
-               Pmin.setXY(U.getX(), U.getY());
+               Pmin.setXY(temp1.getX(), temp1.getY());
                Fmin = problm->F(Pmin);
             }
-            else if (problm->F(DOW) <= problm->F(D) && problm->F(DOW) <= problm->F(G) && problm->F(DOW) <= problm->F(U))
+            else
             {
-               Pmin.setXY(DOW.getX(), DOW.getY());
+               Pmin.setXY(temp3.getX(), temp3.getY());
                Fmin = problm->F(Pmin);
             }
-
-            G.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
-            D.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
-
-            U.setX(min(Pmin.getX() + pasMin, problm->getVariables()[1][1]));
-            DOW.setX(max(Pmin.getX() - pasMin, problm->getVariables()[1][0]));
+            if (problm->F(temp1) < problm->F(temp4))
+            {
+               Pmin.setXY(temp1.getX(), temp1.getY());
+               Fmin = problm->F(Pmin);
+            }
+            else
+            {
+               Pmin.setXY(temp4.getX(), temp4.getY());
+               Fmin = problm->F(Pmin);
+            }
+            if (problm->F(temp2) < problm->F(temp3))
+            {
+               Pmin.setXY(temp2.getX(), temp2.getY());
+               Fmin = problm->F(Pmin);
+            }
+            else
+            {
+               Pmin.setXY(temp3.getX(), temp3.getY());
+               Fmin = problm->F(Pmin);
+            }
+            if (problm->F(temp2) < problm->F(temp4))
+            {
+               Pmin.setXY(temp2.getX(), temp2.getY());
+               Fmin = problm->F(Pmin);
+            }
+            else
+            {
+               Pmin.setXY(temp4.getX(), temp4.getY());
+               Fmin = problm->F(Pmin);
+            }
+            if (problm->F(temp3) < problm->F(temp4))
+            {
+               Pmin.setXY(temp3.getX(), temp3.getY());
+               Fmin = problm->F(Pmin);
+            }
+            else
+            {
+               Pmin.setXY(temp4.getX(), temp4.getY());
+               Fmin = problm->F(Pmin);
+            }
          }
-         pasMin /= 10;
+
+         D.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
+         G.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
+         U.setY(min(Pmin.getY() + pasMin, problm->getVariables()[1][1]));
+         DOW.setY(max(Pmin.getY() - pasMin, problm->getVariables()[1][0]));
       }
    }
 }
 
+void S7::resoudre(Probleme *problm, Point &Pmin, double &Fmin)
+{
 
+   Point tmp;
+
+   if (problm->getDim() == 1) // pour les problèmes 1D
+   {
+      Point G, D;
+
+      double x_centre = ((problm->getVariables())[0][1] + (problm->getVariables())[0][0]) / 2;
+      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 10;
+      Pmin.setX(x_centre);
+      Fmin = problm->F(Pmin);
+      while (pasX > 0.001)
+      {
+
+         D.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
+         G.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
+
+         for (int i = 0; i < (problm->getVariables()[0][1]) / pasX; i++)
+
+         {
+            //cout << "fmin==" << problm->F(Pmin) << endl;
+            //cout << "i=" << i << endl;
+            if (problm->F(G) < Fmin || problm->F(D) < Fmin)
+            {
+               if (problm->F(G) < problm->F(D))
+               {
+                  Pmin.setX(G.getX());
+                  Fmin = problm->F(Pmin);
+               }
+               else
+               {
+                  Pmin.setX(D.getX());
+
+                  Fmin = problm->F(Pmin);
+               }
+            }
+            D.setX(min(Pmin.getX() + pasX, problm->getVariables()[0][1]));
+            G.setX(max(Pmin.getX() - pasX, problm->getVariables()[0][0]));
+         }
+         //cout << "pasX=" << pasX << endl;
+         pasX /= 10;
+         //cout << "pasX=" << pasX << endl;
+      }
+   }
+
+   if (problm->getDim() == 2) // pour les problèmes 2d
+   {
+      Point G, D, U, DOW;
+
+      double x_centre = ((problm->getVariables())[0][1] + (problm->getVariables())[0][0]) / 2;
+      double y_centre = ((problm->getVariables())[1][1] + (problm->getVariables())[1][0]) / 2;
+      double pasX = ((problm->getVariables()[0][1]) - (problm->getVariables()[0][0])) / 10;
+      double pasY = ((problm->getVariables()[1][1]) - (problm->getVariables()[1][0])) / 10;
+      double pasMin = min(pasX, pasY);
+      /*cout << problm->getVariables()[0][1] << endl; // 100
+      cout << problm->getVariables()[0][0] << endl; // -100
+      cout << problm->getVariables()[1][1] << endl; //100
+      cout << problm->getVariables()[1][0] << endl; // -100*/
+
+      tmp.setXY(x_centre, y_centre);
+      Pmin.setXY(tmp.getX(), tmp.getY());
+      Fmin = problm->F(tmp);
+      Point temp1, temp2, temp3, temp4;
+
+      while (pasMin > 0.001)
+      {
+         D.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
+         G.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
+         U.setY(min(Pmin.getY() + pasMin, problm->getVariables()[1][1]));
+         DOW.setY(max(Pmin.getY() - pasMin, problm->getVariables()[1][0]));
+
+         for (int i = 0; i < (problm->getVariables()[0][1]) / pasMin; i++)
+
+         {
+            //cout << "i===" << i << endl;
+
+            temp1.setXY(G.getX(), U.getY());
+            temp2.setXY(G.getX(), DOW.getY());
+            temp3.setXY(D.getX(), U.getY());
+            temp4.setXY(D.getX(), DOW.getY());
+            /*cout << "fm(temp1==" << problm->F(temp1) << endl; affichage qui sert à vérifier la convergence du solveur
+            cout << "fm(temp2==" << problm->F(temp2) << endl;
+            cout << "fm(temp3==" << problm->F(temp3) << endl;
+            cout << "fm(temp4==" << problm->F(temp4) << endl;*/
+            if (problm->F(temp1) < Fmin || problm->F(temp2) < Fmin || problm->F(temp3) < Fmin || problm->F(temp4) < Fmin)
+            {
+               if (problm->F(temp1) < problm->F(temp2))
+               {
+                  Pmin.setXY(temp1.getX(), temp1.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               else
+               {
+                  Pmin.setXY(temp2.getX(), temp2.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               if (problm->F(temp1) < problm->F(temp3))
+               {
+                  Pmin.setXY(temp1.getX(), temp1.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               else
+               {
+                  Pmin.setXY(temp3.getX(), temp3.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               if (problm->F(temp1) < problm->F(temp4))
+               {
+                  Pmin.setXY(temp1.getX(), temp1.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               else
+               {
+                  Pmin.setXY(temp4.getX(), temp4.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               if (problm->F(temp2) < problm->F(temp3))
+               {
+                  Pmin.setXY(temp2.getX(), temp2.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               else
+               {
+                  Pmin.setXY(temp3.getX(), temp3.getY());
+                  Fmin = problm->F(Pmin);
+               }
+               if (problm->F(temp2) < problm->F(temp4))
+               {
+                  Pmin.setXY(temp2.getX(), temp2.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               else
+               {
+                  Pmin.setXY(temp4.getX(), temp4.getY());
+                  Fmin = problm->F(Pmin);
+               }
+               if (problm->F(temp3) < problm->F(temp4))
+               {
+                  Pmin.setXY(temp3.getX(), temp3.getY());
+                  Fmin = problm->F(Pmin);
+                  break;
+               }
+               else
+               {
+                  Pmin.setXY(temp4.getX(), temp4.getY());
+                  Fmin = problm->F(Pmin);
+               }
+
+               D.setX(min(Pmin.getX() + pasMin, problm->getVariables()[0][1]));
+               G.setX(max(Pmin.getX() - pasMin, problm->getVariables()[0][0]));
+               U.setY(min(Pmin.getY() + pasMin, problm->getVariables()[1][1]));
+               DOW.setY(max(Pmin.getY() - pasMin, problm->getVariables()[1][0]));
+            }
+         }
+
+         pasMin /= 10;
+      }
+   }
+}
 
 // définition de la méthode qui permet de recoir un tableau 2D qui contient les variables ( les bornes inf et sup d intervalle)
 double **Probleme::getVariables()
@@ -423,6 +555,7 @@ int Probleme::getDim()
 {
    return this->dim;
 }
+
 /* -------------------------------- définition des méthodes de classes P(i) {1,2,3,4} -----------------------------------------------------*/
 P1::P1() // définition de P1
 {
@@ -486,7 +619,7 @@ P4::P4() // définition de P4
    this->type = 4;
    this->dim = 1;
    this->variables = (double **)malloc(sizeof(double *));
-   this->variables[0] = (double *)malloc(2 * sizeof(double));
+   this->variables[0] = (double *)malloc(sizeof(double));
    this->variables[0][0] = -2;
    this->variables[0][1] = 2;
 }
@@ -497,6 +630,7 @@ double P4::F(Point p) // défintion de la fonction f(x) = exp(2 + 3*x + 4*x^2)
 }
 
 ////////////////////////////définition des méthodes de la classe Point////////////////////////////////////////////
+
 double Point::getX()
 {
    return this->x;
